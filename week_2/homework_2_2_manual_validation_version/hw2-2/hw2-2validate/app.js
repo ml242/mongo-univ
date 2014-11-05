@@ -13,7 +13,7 @@ MongoClient.connect('mongodb://localhost:27017/weather', function(err, db) {
 
     var query = {};
     var projection = { 'State' : 1, 'Temperature' : -1 };
-    var sort = {"Temperature" : -1 };    
+    var sort = {"Temperature" : -1 };     
     var cursor = db.collection('data').find(query, projection, sort);
     console.log("cursor:" + cursor);
 
