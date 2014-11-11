@@ -30,6 +30,15 @@ function PostsDAO(db) {
 
         // now insert the post
         // hw3.2 TODO
+
+        posts.insert(post, function(err, doc){
+            if (!err) {
+                console.log("Inserted new post");
+                return callback(null, permalink);
+            }
+            return callback(err, null)
+        });
+
         callback(Error("insertEntry NYI"), null);
     }
 
@@ -75,13 +84,48 @@ function PostsDAO(db) {
     this.addComment = function(permalink, name, email, body, callback) {
         "use strict";
 
-        var comment = {'author': name, 'body': body}
-
+        var comment = {
+            'author': name, 
+            'body': body
+        }
         if (email != "") {
             comment['email'] = email
         }
 
-        // hw3.3 TODO
+        // {"permalink": permalink}, {$push: { "comments": comment }}
+
+        var query = {"permalink": permalink};
+        var operator = {$push: { "comments": comment }};
+
+        posts.update(query, operator, function(err, doc){
+
+            if (!err) {
+                
+                console.log('inserted comment');
+                return callback(null, doc);
+            }
+            return callback(err, null);
+        });
+
+
+
+
+
+        // posts.update({"permalink": permalink}, {$push: { "comments": comment }}, function(err, doc) {
+        //     if (err) {
+        //         return callback(err, null)
+        //     }
+        //     else {
+        //         console.dir(doc + " : Comments added!")
+        //         return callback(null, doc);
+        //     }
+        // });
+
+
+
+
+
+
         callback(Error("addComment NYI"), null);
     }
 }
