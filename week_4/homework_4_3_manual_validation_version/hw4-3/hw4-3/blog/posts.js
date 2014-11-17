@@ -9,7 +9,8 @@ function PostsDAO(db) {
         return new PostsDAO(db);
     }
 
-    var posts = db.collection("posts");
+    var posts = db.posts.ensureIndex({"date" : 1, "permalink" : 1, "tags" : 1});
+    // var posts = db.collection("posts");
 
     this.insertEntry = function (title, body, tags, author, callback) {
         "use strict";
@@ -20,16 +21,17 @@ function PostsDAO(db) {
         permalink = permalink.replace( /\W/g, '' );
 
         // Build a new post
-        var post = {"title": title,
+        var post = {
+                "title": title,
                 "author": author,
                 "body": body,
-                "permalink":permalink,
+                "permalink": permalink,
                 "tags": tags,
                 "comments": [],
-                "date": new Date()}
+                "date": new Date()
+            }
 
-        // now insert the post
-        // hw3.2 TODO
+        // hw3.2
         posts.insert(post, function (err, result) {
             "use strict";
 
@@ -37,45 +39,6 @@ function PostsDAO(db) {
 
             console.log("Inserted new post");
             callback(err, permalink);
-        });
-    }
-
-    this.getPosts = function(num, callback) {
-        "use strict";
-
-        posts.find().sort('date', -1).limit(num).toArray(function(err, items) {
-            "use strict";
-
-            if (err) return callback(err, null);
-
-            console.log("Found " + items.length + " posts");
-
-            callback(err, items);
-        });
-    }
-
-    this.getPostsByTag = function(tag, num, callback) {
-        "use strict";
-
-        posts.find({ tags : tag }).sort('date', -1).limit(num).toArray(function(err, items) {
-            "use strict";
-
-            if (err) return callback(err, null);
-
-            console.log("Found " + items.length + " posts");
-
-            callback(err, items);
-        });
-    }
-
-    this.getPostByPermalink = function(permalink, callback) {
-        "use strict";
-        posts.findOne({'permalink': permalink}, function(err, post) {
-            "use strict";
-
-            if (err) return callback(err, null);
-
-            callback(err, post);
         });
     }
 
@@ -97,6 +60,57 @@ function PostsDAO(db) {
             callback(err, numModified);
         });
     }
+
+    
+    // HOMEWORK 4.3 MAKE BLOG FAST
+
+    // original get posts
+    // Optimize this to use index.
+
+    this.getPosts = function(num, callback) {
+        "use strict";
+
+        posts.find().sort('date', -1).limit(num).toArray(function(err, items) {
+            "use strict";
+
+            if (err) return callback(err, null);
+
+            console.log("Found " + items.length + " posts");
+
+            callback(err, items);
+        });
+    }
+
+    // Optimize this to use index.
+
+    this.getPostsByTag = function(tag, num, callback) {
+        "use strict";
+
+        posts.find({ tags : tag }).sort('date', -1).limit(num).toArray(function(err, items) {
+            "use strict";
+
+            if (err) return callback(err, null);
+
+            console.log("Found " + items.length + " posts");
+
+            callback(err, items);
+        });
+    }
+
+    // Optimize this to use index.
+
+    this.getPostByPermalink = function(permalink, callback) {
+        "use strict";
+        posts.findOne({'permalink': permalink}, function(err, post) {
+            "use strict";
+
+            if (err) return callback(err, null);
+
+            callback(err, post);
+        });
+    }
+
+
 }
 
 module.exports.PostsDAO = PostsDAO;
