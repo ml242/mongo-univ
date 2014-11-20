@@ -9,8 +9,8 @@ function PostsDAO(db) {
         return new PostsDAO(db);
     }
 
-    var posts = db.posts.ensureIndex({"date" : 1, "permalink" : 1, "tags" : 1});
-    // var posts = db.collection("posts");
+    // var posts = db.posts.ensureIndex({"date" : -1, "permalink" : 1, "tags" : 1});
+    var posts = db.collection("posts");
 
     this.insertEntry = function (title, body, tags, author, callback) {
         "use strict";
